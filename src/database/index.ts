@@ -25,5 +25,6 @@ const client = new Database();
 export default client;
 
 export const DB_PREFIX = {
-  CART: `CART_`
+  CART: `CART_`,
+  DISCOUNT: `DISCOUNT_CODE_`
 }
