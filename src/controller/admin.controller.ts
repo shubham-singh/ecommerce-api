@@ -52,9 +52,9 @@ export function analyse(request: Request, response: Response) {
 
 
     const allCarts: ICart[] = client.getAllMatchingValues(DB_PREFIX.CART);
-    console.log(JSON.stringify(allCarts, null, 2));
+
     const total: { totalItems: number, totalPrice: number; totalDiscount: number } =
-      allCarts.reduce(
+      allCarts.filter((cart) => cart.status === 'closed').reduce(
         (accumulator, current) => {
           accumulator.totalItems += current.items.reduce((acc, cur) => {
             return acc += cur.quantity;
