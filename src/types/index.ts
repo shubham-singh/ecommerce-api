@@ -10,3 +10,8 @@ export interface ICart {
     total: number;
     discount: number;
 }
+
+export interface IDiscountCode {
+    valid: boolean;
+    cartID: string
+}

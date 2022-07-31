@@ -1,3 +1,8 @@
+export const DB_PREFIX = {
+  CART: `CART_`,
+  DISCOUNT: `DISCOUNT_CODE_`
+}
+
 class Database {
   private db: any;
   constructor() {
@@ -6,6 +11,10 @@ class Database {
 
   currentStateOfDB() {
     return this.db;
+  }
+
+  getCount(key: string) {
+    return Object.keys(this.db).filter((currentKey: string) => currentKey.includes(key)).length;
   }
 
   get(key: string) {
@@ -23,8 +32,3 @@ class Database {
 
 const client = new Database();
 export default client;
-
-export const DB_PREFIX = {
-  CART: `CART_`,
-  DISCOUNT: `DISCOUNT_CODE_`
-}

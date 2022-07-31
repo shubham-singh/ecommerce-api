@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import client, { DB_PREFIX } from "../database";
-import { ICart, IItem } from "../types";
+import { ICart, IDiscountCode, IItem } from "../types";
 
 /**
  * @description Function to add item to cart. If item is already in cart, increases its quantity
@@ -80,32 +80,46 @@ export function addToCart(request: Request, response: Response) {
  * @returns response
  */
 export function checkout(request: Request, response: Response) {
+  const { cartID } = request.params;
   try {
-    const { cartID } = request.params;
-
     let cart: ICart | undefined = client.get(`${DB_PREFIX.CART}${cartID}`);
 
     if (!cart) {
       throw new Error("Cart not found");
     }
 
-    const { discountCode } = request.body;
-    const isDiscountCodeValid = client.get(
-      `${DB_PREFIX.DISCOUNT}${discountCode}`
+    const { discount_code } = request.body;
+    const validDiscountCode: IDiscountCode | undefined = client.get(
+      `${DB_PREFIX.DISCOUNT}${discount_code}`
     );
 
-    if (!isDiscountCodeValid) {
+    if (!validDiscountCode) {
       throw new Error("Discount code is not valid");
+    }
+
+    if (validDiscountCode.cartID !== cartID) {
+      throw new Error("Code not valid for the user");
+    }
+
+    if (!validDiscountCode.valid) {
+      throw new Error("Discount code already used");
     }
 
     cart.discount = Math.round((Number(cart.total) / 100) * 10);
 
-    client.set(`${DB_PREFIX.CART}${cartID}`, cart)
+    client.set(`${DB_PREFIX.CART}${cartID}`, cart);
 
-    return response.status(200).json({
+    response.status(200).json({
       status: true,
-      message: 'Discount code successfully applied',
+      message: "Discount code successfully applied",
     });
+
+    client.set(`${DB_PREFIX.DISCOUNT}${discount_code}`, {
+      valid: false,
+      cartID,
+    });
+    
+    return;
   } catch (error: Error | any) {
     console.error(error);
     return response.status(500).json({
