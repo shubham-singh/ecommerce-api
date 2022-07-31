@@ -16,7 +16,10 @@ export function generateDiscountCode(request: Request, response: Response) {
     const numberOfDiscountCode = client.getCount(DB_PREFIX.DISCOUNT);
     let discountCode = getDiscountCode(numberOfDiscountCode);
 
-    if (numberOfAccounts === 0 || numberOfAccounts % 1 !== 0) {
+    // if no accounts are present or if the account (cartID) is not multiple
+    // of 7 then throw error
+    // else generate a coupon code
+    if (numberOfAccounts === 0 || numberOfAccounts % 6 !== 0) {
       throw new Error("Cannot generate discount code");
     } else {
       client.set(`${DB_PREFIX.DISCOUNT}${discountCode}`, {
@@ -46,13 +49,18 @@ export function generateDiscountCode(request: Request, response: Response) {
  */
 export function analyse(request: Request, response: Response) {
   try {
+
+    // get all discount codes from the database
     const allDiscountCode: string[] = client
       .getAllMatchingKeys(DB_PREFIX.DISCOUNT)
       .map((key) => key.replace(DB_PREFIX.DISCOUNT, ""));
 
-
+    
+    // get all carts from the database 
     const allCarts: ICart[] = client.getAllMatchingValues(DB_PREFIX.CART);
 
+    // filter carts that are closed (completed / checked out)
+    // calculate totalPrice, totalDiscount, totalItems
     const total: { totalItems: number, totalPrice: number; totalDiscount: number } =
       allCarts.filter((cart) => cart.status === 'closed').reduce(
         (accumulator, current) => {
