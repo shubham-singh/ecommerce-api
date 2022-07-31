@@ -1,0 +1,30 @@
+{
+  "name": "ecommerce-api",
+  "version": "1.0.0",
+  "description": "Basic E-Commerce API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.ts",
+    "build": "rm -r build && npx tsc --project ./tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shubham-singh/ecommerce-api.git"
+  },
+  "author": "shubhamsng7@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shubham-singh/ecommerce-api/issues"
+  },
+  "homepage": "https://github.com/shubham-singh/ecommerce-api#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "nodemon": "^2.0.19",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}
