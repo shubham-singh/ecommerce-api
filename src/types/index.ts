@@ -9,6 +9,7 @@ export interface ICart {
     items: IItem[];
     total: number;
     discount: number;
+    status: 'open' | 'closed';
 }
 
 export interface IDiscountCode {

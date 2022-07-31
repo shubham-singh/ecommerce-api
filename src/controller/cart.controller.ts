@@ -55,6 +55,7 @@ export function addToCart(request: Request, response: Response) {
         items: [item],
         total: Number(item.price) * Number(item.quantity),
         discount: 0,
+        status: 'open'
       };
     }
 
@@ -87,31 +88,40 @@ export function checkout(request: Request, response: Response) {
     if (!cart) {
       throw new Error("Cart not found");
     }
+    
+    if (cart.status === 'closed') {
+      throw new Error("You already checkout out this cart. Please create a new one");
+    }
 
     const { discount_code } = request.body;
-    const validDiscountCode: IDiscountCode | undefined = client.get(
-      `${DB_PREFIX.DISCOUNT}${discount_code}`
-    );
 
-    if (!validDiscountCode) {
-      throw new Error("Discount code is not valid");
+    if (discount_code) {
+      const validDiscountCode: IDiscountCode | undefined = client.get(
+        `${DB_PREFIX.DISCOUNT}${discount_code}`
+      );
+  
+      if (!validDiscountCode) {
+        throw new Error("Discount code is not valid");
+      }
+  
+      if (validDiscountCode.cartID !== cartID) {
+        throw new Error("Code not valid for the user");
+      }
+  
+      if (!validDiscountCode.valid) {
+        throw new Error("Discount code already used");
+      }
+
+      cart.discount = Math.round((Number(cart.total) / 100) * 10);
     }
 
-    if (validDiscountCode.cartID !== cartID) {
-      throw new Error("Code not valid for the user");
-    }
-
-    if (!validDiscountCode.valid) {
-      throw new Error("Discount code already used");
-    }
-
-    cart.discount = Math.round((Number(cart.total) / 100) * 10);
+    cart.status = 'closed';
 
     client.set(`${DB_PREFIX.CART}${cartID}`, cart);
 
     response.status(200).json({
       status: true,
-      message: "Discount code successfully applied",
+      message: "Order Placed :)",
     });
 
     client.set(`${DB_PREFIX.DISCOUNT}${discount_code}`, {

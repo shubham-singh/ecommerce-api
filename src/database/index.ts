@@ -1,7 +1,7 @@
 export const DB_PREFIX = {
   CART: `CART_`,
-  DISCOUNT: `DISCOUNT_CODE_`
-}
+  DISCOUNT: `DISCOUNT_CODE_`,
+};
 
 class Database {
   private db: any;
@@ -14,7 +14,20 @@ class Database {
   }
 
   getCount(key: string) {
-    return Object.keys(this.db).filter((currentKey: string) => currentKey.includes(key)).length;
+    return Object.keys(this.db).filter((currentKey: string) =>
+      currentKey.includes(key)
+    ).length;
+  }
+
+  getAllMatchingKeys(key: string) {
+    return Object.keys(this.db).filter((currentKey) => currentKey.includes(key));
+  }
+
+  getAllMatchingValues(key: string) {
+    const data = Object.keys(this.db)
+      .filter((currentKey) => currentKey.includes(key))
+      .map((currentKey) => JSON.parse(this.db[currentKey]));
+    return data;
   }
 
   get(key: string) {
@@ -26,7 +39,7 @@ class Database {
   }
 
   delete(key: string) {
-    delete this.db[key]
+    delete this.db[key];
   }
 }
 
