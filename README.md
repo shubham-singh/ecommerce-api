@@ -34,3 +34,13 @@ Endpoint: /admin/generate-discount-code/:cartID
 Method: GET
 Endpoint: /admin/analyse
 ```
+
+# How to run this repository?
+Clone this repository and run ```npm install```
+
+## Available Scripts
+## ```npm run dev```
+Runs the app in the development mode.
+
+## ```npm run build```
+Builds the app for production to the build folder.
