@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import client, { DB_PREFIX } from "./database";
-import database from "./database";
+import client, { DB_PREFIX } from "../database";
+import database from "../database";
 const express = require("express");
 const router: Router = express.Router();
 

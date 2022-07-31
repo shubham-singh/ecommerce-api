@@ -1,6 +1,6 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import cartRoutes from "./src/routes/cart.route";
-import client from "./src/routes/database";
+import client from "./src/database";
 
 const app: Application = express();
 
